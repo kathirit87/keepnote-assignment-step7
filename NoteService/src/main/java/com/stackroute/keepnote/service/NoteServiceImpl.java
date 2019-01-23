@@ -1,9 +1,17 @@
 package com.stackroute.keepnote.service;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.stackroute.keepnote.exception.NoteNotFoundExeption;
 import com.stackroute.keepnote.model.Note;
+import com.stackroute.keepnote.model.NoteUser;
+import com.stackroute.keepnote.repository.NoteRepository;
 
 /*
 * Service classes are used here to implement additional business logic/validation 
@@ -14,7 +22,7 @@ import com.stackroute.keepnote.model.Note;
 * better. Additionally, tool support and additional behavior might rely on it in the 
 * future.
 * */
-
+@Service
 public class NoteServiceImpl implements NoteService{
 
 	/*
@@ -23,11 +31,31 @@ public class NoteServiceImpl implements NoteService{
 	 * object using the new keyword.
 	 */
 	
+	@Autowired
+	private NoteRepository noteRepository;
+	
+	public NoteServiceImpl(NoteRepository noteRepository) {
+		this.noteRepository=noteRepository;
+	}
+	
 	/*
 	 * This method should be used to save a new note.
 	 */
 	public boolean createNote(Note note) {
 		
+		NoteUser noteUser = new NoteUser();
+		if(note== null) {
+			return false;
+		}
+		List<Note> notes = new ArrayList<>();
+		notes.add(note);
+		noteUser.setNotes(notes);
+		noteUser.setUserId(note.getNoteCreatedBy());
+		
+		NoteUser noteUser2=  noteRepository.insert(noteUser);
+		if(noteUser2!=null) {
+			return true;
+		}
 		return false;
 	}
 	
@@ -35,6 +63,25 @@ public class NoteServiceImpl implements NoteService{
 
 	
 	public boolean deleteNote(String userId, int noteId) {
+		
+		if(userId!= null) {
+			
+			Note note = null;
+			try {
+				note = getNoteByNoteId(userId, noteId);
+			} catch (NoteNotFoundExeption e) {
+				throw new NullPointerException();
+			}
+			if(note!= null) {
+				NoteUser noteUser = new NoteUser();
+				List<Note> notes = new ArrayList<>();
+				notes.add(note);
+				noteUser.setNotes(notes);
+				noteUser.setUserId(userId);
+				noteRepository.delete(noteUser);
+				return true;
+			}
+		}
 		
 		return false;
 	}
@@ -44,6 +91,12 @@ public class NoteServiceImpl implements NoteService{
 	
 	public boolean deleteAllNotes(String userId) {
 		
+		if(userId!= null) {
+			
+			noteRepository.deleteAllByUserId(userId);
+			return true;
+		}
+		
 		return false;
 	}
 
@@ -51,6 +104,26 @@ public class NoteServiceImpl implements NoteService{
 	 * This method should be used to update a existing note.
 	 */
 	public Note updateNote(Note note, int id, String userId) throws NoteNotFoundExeption {
+		
+		Note note1 = null;
+		if(userId != null) {
+			
+			try {
+				note1 =  getNoteByNoteId(userId, id);
+			} catch (NoteNotFoundExeption e) {
+				throw e;
+			}
+			if(note!= null && note1!= null) {
+				NoteUser noteUser = new NoteUser();
+				List<Note> notes = new ArrayList<>();
+				notes.add(note);
+				noteUser.setNotes(notes);
+				noteUser.setUserId(userId);
+				noteRepository.insert(noteUser);
+				return note;
+			}
+			
+		}
 		
 		return null;
 	}
@@ -60,7 +133,28 @@ public class NoteServiceImpl implements NoteService{
 	 */
 	public Note getNoteByNoteId(String userId, int noteId) throws NoteNotFoundExeption {
 		
-		return null;
+		try {
+			if(userId!= null && noteId > 0) {
+				
+				Optional<NoteUser> optional =  noteRepository.findById(userId);
+				if(optional.isPresent() && optional.get().getNotes()!= null) {
+					
+					Iterator<Note> notes = optional.get().getNotes().iterator();
+					while (notes.hasNext()) {
+						Note note = (Note) notes.next();
+						if(note.getNoteId() ==noteId ) {
+							 return  note;
+						}
+					}
+					return null;
+				}
+			}
+			
+		} catch (Exception e) {
+			throw new NoteNotFoundExeption("Note Not Found!");
+		}
+		
+		throw new NoteNotFoundExeption("Note Not Found!");
 	}
 
 	/*
@@ -68,6 +162,16 @@ public class NoteServiceImpl implements NoteService{
 	 */
 	public List<Note> getAllNoteByUserId(String userId) {
 		
+		if(userId!= null) {
+			
+			Optional<NoteUser> optional =  noteRepository.findById(userId);
+			
+			if(optional.isPresent() && optional.get().getNotes()!= null) {
+				
+				return optional.get().getNotes();
+			}
+		}
+			
 		return null;
 	}
 

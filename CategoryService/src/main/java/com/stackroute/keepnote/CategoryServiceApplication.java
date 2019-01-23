@@ -3,7 +3,13 @@ package com.stackroute.keepnote;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+
+import com.stackroute.keepnote.jwtfilter.JwtFilter;
+
+import brave.sampler.Sampler;
 
 /*
  * The @SpringBootApplication annotation is equivalent to using @Configuration, @EnableAutoConfiguration 
@@ -11,11 +17,9 @@ import org.springframework.context.annotation.Bean;
  */
 
 @SpringBootApplication
+@EnableFeignClients("com.stackroute.keepnote")
+@EnableDiscoveryClient
 public class CategoryServiceApplication {
-
-	
-	
-
 	/*
 	 * Define the bean for Filter registration. Create a new FilterRegistrationBean
 	 * object and use setFilter() method to set new instance of JwtFilter object.
@@ -23,10 +27,11 @@ public class CategoryServiceApplication {
 	 */
 	@Bean
 	public FilterRegistrationBean jwtFilter() {
-		return null;
+		final FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+		registrationBean.setFilter(new JwtFilter());
+		registrationBean.addUrlPatterns("/api/v1/*");
+		return registrationBean;
 	}
-	
-	
 	
 	/*
 	 * 
@@ -36,5 +41,10 @@ public class CategoryServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CategoryServiceApplication.class, args);
+	}
+	
+	@Bean
+	public Sampler defaultSampler() {
+		return Sampler.ALWAYS_SAMPLE;
 	}
 }

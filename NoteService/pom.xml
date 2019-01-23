@@ -13,7 +13,7 @@
 
 	<parent>
 		<groupId>com.stackroute.keepnote</groupId>
-		<artifactId>KeepNote-Step-6-Boilerplate</artifactId>
+		<artifactId>KeepNote-Step-7</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 

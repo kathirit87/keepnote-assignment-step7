@@ -1,7 +1,9 @@
 package com.stackroute.keepnote.test.repository;
 
-import com.stackroute.keepnote.model.Category;
-import com.stackroute.keepnote.repository.CategoryRepository;
+import java.util.Date;
+import java.util.List;
+import java.util.NoSuchElementException;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -9,14 +11,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
+import com.stackroute.keepnote.model.Category;
+import com.stackroute.keepnote.repository.CategoryRepository;
 
 @RunWith(SpringRunner.class)
 @DataMongoTest
+@DirtiesContext
 public class CategoryRepositoryTest {
 
     @Autowired

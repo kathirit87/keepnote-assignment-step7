@@ -4,12 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.stackroute.keepnote</groupId>
-    <artifactId>KeepNote-Step-6-Boilerplate</artifactId>
+    <artifactId>KeepNote-Step-7</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>KeepNote-Step-6-Boilerplate</name>
-    <description>project for Spring Boot Keep Note Step-5</description>
+    <name>KeepNote-Step-7</name>
+    <description>project for Spring Boot Keep Note Step-7</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -26,6 +26,49 @@
 
 
     <dependencies>
+    
+    	<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+			<version>2.0.2.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+			<version>2.0.2.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-sleuth</artifactId>
+			<version>2.0.2.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-sleuth-zipkin</artifactId>
+			<version>2.0.2.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bus-amqp</artifactId>
+			<version>2.0.0.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+			<version>2.0.2.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+			<version>2.0.2.RELEASE</version>
+		</dependency>
+    
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -40,7 +83,7 @@
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <!--<version>1.9.1</version>-->
+            <version>1.9.1</version>
         </dependency>
 
         <dependency>
@@ -71,8 +114,7 @@
             <artifactId>springfox-swagger2</artifactId>
             <version>2.7.0</version>
         </dependency>
-
-
+        
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -88,6 +130,7 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.9.1</version>
         </dependency>
+        
     </dependencies>
 
     <build>
@@ -101,6 +144,7 @@
         <module>NoteService</module>
         <module>CategoryService</module>
         <module>UserAuthentication-Service</module>
-
+        <module>EurekaNamingServer</module>
+        <module>ZuulAPIGatewayServer</module>
     </modules>
 </project>
