@@ -3,13 +3,9 @@ package com.stackroute.keepnote;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 
 import com.stackroute.keepnote.jwtfilter.JwtFilter;
-
-import brave.sampler.Sampler;
 
 /*
  * The @SpringBootApplication annotation is equivalent to using @Configuration, @EnableAutoConfiguration 
@@ -17,8 +13,6 @@ import brave.sampler.Sampler;
  */
 
 @SpringBootApplication
-@EnableFeignClients("com.stackroute.keepnote")
-@EnableDiscoveryClient
 public class CategoryServiceApplication {
 	/*
 	 * Define the bean for Filter registration. Create a new FilterRegistrationBean
@@ -43,8 +37,4 @@ public class CategoryServiceApplication {
 		SpringApplication.run(CategoryServiceApplication.class, args);
 	}
 	
-	@Bean
-	public Sampler defaultSampler() {
-		return Sampler.ALWAYS_SAMPLE;
-	}
 }

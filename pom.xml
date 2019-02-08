@@ -27,7 +27,7 @@
 
     <dependencies>
     
-    	<dependency>
+    	<!-- <dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
 			<version>2.0.2.RELEASE</version>
@@ -67,7 +67,7 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
 			<version>2.0.2.RELEASE</version>
-		</dependency>
+		</dependency> -->
     
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
         <dependency>
@@ -144,7 +144,7 @@
         <module>NoteService</module>
         <module>CategoryService</module>
         <module>UserAuthentication-Service</module>
-        <module>EurekaNamingServer</module>
+        
         <module>ZuulAPIGatewayServer</module>
     </modules>
 </project>

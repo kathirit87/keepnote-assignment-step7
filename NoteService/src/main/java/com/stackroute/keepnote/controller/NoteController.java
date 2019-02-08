@@ -3,12 +3,14 @@ package com.stackroute.keepnote.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.stackroute.keepnote.exception.NoteNotFoundExeption;
@@ -26,8 +28,10 @@ import io.swagger.annotations.ApiOperation;
  * format. Starting from Spring 4 and above, we can use @RestController annotation which 
  * is equivalent to using @Controller and @ResposeBody annotation
  */
+@CrossOrigin(origins="http://localhost:4200")
 @RestController
 @Api
+@RequestMapping
 public class NoteController {
 
 	/*
@@ -59,6 +63,7 @@ public class NoteController {
 	@PostMapping("/api/v1/note")
 	public ResponseEntity<?> createNote(@RequestBody Note note) {
 		
+		System.out.println("note:::: ----------"+note);
 		boolean flag = noteService.createNote(note);
 		if(flag) {
 			return new ResponseEntity<Note>(HttpStatus.CREATED);

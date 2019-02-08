@@ -13,6 +13,8 @@ import com.stackroute.keepnote.jwtfilter.JwtFilter;
  */
 
 @SpringBootApplication
+//@EnableFeignClients("com.stackroute.keepnote")
+//@EnableDiscoveryClient
 public class UserServiceApplication {
 
 	

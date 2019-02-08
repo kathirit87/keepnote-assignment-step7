@@ -1,6 +1,7 @@
 package com.stackroute.keepnote.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -48,11 +49,13 @@ public class NoteServiceImpl implements NoteService{
 			return false;
 		}
 		List<Note> notes = new ArrayList<>();
+		note.setNoteCreationDate(new Date());
 		notes.add(note);
 		noteUser.setNotes(notes);
 		noteUser.setUserId(note.getNoteCreatedBy());
 		
 		NoteUser noteUser2=  noteRepository.insert(noteUser);
+		System.out.println("noteUser2:::: "+noteUser2);
 		if(noteUser2!=null) {
 			return true;
 		}

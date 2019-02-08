@@ -10,8 +10,10 @@ import javax.servlet.ServletException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,6 +21,7 @@ import com.stackroute.keepnote.exception.UserAlreadyExistsException;
 import com.stackroute.keepnote.model.User;
 import com.stackroute.keepnote.service.UserAuthenticationService;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.swagger.annotations.Api;
@@ -32,12 +35,15 @@ import io.swagger.annotations.ApiOperation;
  * format. Starting from Spring 4 and above, we can use @RestController annotation which 
  * is equivalent to using @Controller and @ResposeBody annotation
  */
+@CrossOrigin(origins="http://localhost:4200")
 @RestController
 @Api
+@RequestMapping
 public class UserAuthenticationController {
 	
 	static final long EXPIRATION_TIME= 300000;
 	Map<String, String> map = new HashMap<>();
+	Map<String, Boolean> map1 = new HashMap<>();
 
     /*
 	 * Autowiring should be implemented for the UserAuthenticationService. (Use Constructor-based
@@ -78,6 +84,31 @@ public class UserAuthenticationController {
     	
     }
 
+    
+    @ApiOperation(value="User Authentication Check")
+    @PostMapping("/api/v1/auth/isAuthenticated")
+    public ResponseEntity<?> authCheck(@RequestHeader(value="authorization") String authorization) throws Exception{
+    	String isAuthenticated = "false";
+    	User user = new User();
+    	try {
+    		if (authorization == null || !authorization.startsWith("Bearer ")) {
+				throw new ServletException("Missing or invalid Authorization header");
+			}
+			final String token = authorization.substring(7);
+			final Claims claims = Jwts.parser()
+									  .setSigningKey("secretkey")
+									  .parseClaimsJws(token)
+									  .getBody();
+			map1.clear();
+    		map1.put("isAuthenticated", true);
+    		return new ResponseEntity<> (map1, HttpStatus.OK);
+		} catch (Exception e) {
+			map1.clear();
+    		map1.put("isAuthenticated", false);
+			return new ResponseEntity<> (map1, HttpStatus.OK);
+		}
+    	
+    }
 
 
 	/* Define a handler method which will authenticate a user by reading the Serialized user
@@ -98,15 +129,15 @@ public class UserAuthenticationController {
     public ResponseEntity<?> login(@RequestBody User user) {
     	
     	String jwtToken = "";
-    	
+    	System.out.println("User Data :: " + user);
     	try {
 			
     		jwtToken = getToken(user.getUserId(), user.getUserPassword());
     		map.clear();
     		map.put("message", "user successfully logged in!");
     		map.put("token", jwtToken);
-    		
 		} catch (Exception e) {
+			e.printStackTrace();
 			map.clear();
     		map.put("message", e.getMessage());
     		map.put("token", null);
@@ -124,23 +155,30 @@ public class UserAuthenticationController {
 // Generate JWT token
 	public String getToken(String username, String password) throws Exception {
 		
+		String jwtToken = null;
 		if(username== null && password==null) {
 			throw new ServletException("Please enter username and password!");
 		}
 		
-		User user = authenticationService.findByUserIdAndPassword(username, password);
-		
-		if(user== null) {
-			throw new ServletException("Invalid Credentials!");
+		try {
+			User user = authenticationService.findByUserIdAndPassword(username, password);
+			
+			if(user== null) {			
+				throw new ServletException("Invalid Credentials!");
+			}
+			
+			jwtToken = Jwts.builder()
+					.setSubject(username)
+					.setIssuedAt(new Date()) 
+					.setExpiration(new Date(System.currentTimeMillis()+EXPIRATION_TIME))
+					.signWith(SignatureAlgorithm.HS256, "secretkey")
+					.compact();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
-		String jwtToken = Jwts.builder()
-				.setSubject(username)
-				.setIssuedAt(new Date())
-				.setExpiration(new Date(System.currentTimeMillis()+EXPIRATION_TIME))
-				.signWith(SignatureAlgorithm.HS256, "secretkey")
-				.compact();
-				
+		System.out.println("jwtToken :: " +jwtToken);	
 			
         return jwtToken;
         
