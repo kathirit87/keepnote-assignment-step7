@@ -34,31 +34,53 @@ public class NoteServiceImpl implements NoteService{
 	
 	@Autowired
 	private NoteRepository noteRepository;
-	
-	public NoteServiceImpl(NoteRepository noteRepository) {
-		this.noteRepository=noteRepository;
+	private DBSequenceGeneratorService sequenceGeneratorService;
+			
+	public NoteServiceImpl(NoteRepository noteRepository, DBSequenceGeneratorService sequenceGeneratorService) {
+		this.noteRepository = noteRepository;
+		this.sequenceGeneratorService = sequenceGeneratorService;
 	}
-	
+
 	/*
 	 * This method should be used to save a new note.
 	 */
 	public boolean createNote(Note note) {
 		
-		NoteUser noteUser = new NoteUser();
-		if(note== null) {
-			return false;
-		}
-		List<Note> notes = new ArrayList<>();
-		note.setNoteCreationDate(new Date());
-		notes.add(note);
-		noteUser.setNotes(notes);
-		noteUser.setUserId(note.getNoteCreatedBy());
 		
-		NoteUser noteUser2=  noteRepository.insert(noteUser);
-		System.out.println("noteUser2:::: "+noteUser2);
-		if(noteUser2!=null) {
-			return true;
+		NoteUser noteUser = new NoteUser();
+		if(note!= null && note.getNoteCreatedBy()!= null) {
+			note.setNoteCreationDate(new Date());
+			if(sequenceGeneratorService!= null)
+			note.setNoteId(sequenceGeneratorService.generateSeq("note_seq").intValue());
+			List<Note> notes = null;
+			
+			notes = getAllNoteByUserId(note.getNoteCreatedBy());
+			if(notes!= null && !notes.isEmpty()) {
+				
+				notes.add(note);
+				noteUser.setNotes(notes);
+				//noteUser.setUserId(note.getNoteCreatedBy());
+				NoteUser noteUser2=  noteRepository.save(noteUser);
+				System.out.println("noteUser2 Update:::: "+noteUser2);
+				if(noteUser2!=null) {
+					return true;
+				}
+				
+			}else {
+
+				notes = new ArrayList<>();
+				notes.add(note);
+				noteUser.setNotes(notes);
+				noteUser.setUserId(note.getNoteCreatedBy());
+				
+				NoteUser noteUser2=  noteRepository.insert(noteUser);
+				System.out.println("noteUser2 Insert:::: "+noteUser2);
+				if(noteUser2!=null) {
+					return true;
+				}
+			}
 		}
+		
 		return false;
 	}
 	
@@ -108,27 +130,32 @@ public class NoteServiceImpl implements NoteService{
 	 */
 	public Note updateNote(Note note, int id, String userId) throws NoteNotFoundExeption {
 		
-		Note note1 = null;
+		List<Note> notes = null;
 		if(userId != null) {
 			
-			try {
-				note1 =  getNoteByNoteId(userId, id);
-			} catch (NoteNotFoundExeption e) {
-				throw e;
-			}
-			if(note!= null && note1!= null) {
+			 getNoteByNoteId(userId, id);
+			
+			notes = getAllNoteByUserId(userId);
+			//note1 =  getNoteByNoteId(userId, id);
+			if(note!= null && notes != null && !notes.isEmpty()) {
 				NoteUser noteUser = new NoteUser();
-				List<Note> notes = new ArrayList<>();
-				notes.add(note);
-				noteUser.setNotes(notes);
-				noteUser.setUserId(userId);
-				noteRepository.insert(noteUser);
+				List<Note> newNotes = new ArrayList<>();
+				for (Note note2 : notes) {
+					if(note2.getNoteId()!=id) {
+						newNotes.add(note2);
+					}
+				}
+				
+				newNotes.add(note);
+				//noteUser.setNotes(notes);
+				//noteUser.setUserId(userId);
+				noteRepository.save(noteUser);
 				return note;
 			}
 			
 		}
 		
-		return null;
+		throw new NoteNotFoundExeption("Note not found");
 	}
 
 	/*

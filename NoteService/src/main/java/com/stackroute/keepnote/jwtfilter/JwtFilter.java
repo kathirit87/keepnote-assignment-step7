@@ -63,6 +63,7 @@ public class JwtFilter extends GenericFilterBean {
 									  .parseClaimsJws(token)
 									  .getBody();
 			request.setAttribute("claims", claims);
+			System.out.println("Claims Subject"+claims.getSubject());
 			filterChain.doFilter(req, res);
 		}
 

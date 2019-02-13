@@ -1,5 +1,7 @@
 package com.stackroute.keepnote.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import com.stackroute.keepnote.exception.NoteNotFoundExeption;
 import com.stackroute.keepnote.model.Note;
 import com.stackroute.keepnote.service.NoteService;
 
+import io.jsonwebtoken.Claims;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -61,9 +64,11 @@ public class NoteController {
 	 */
 	@ApiOperation(value="Create a Note")
 	@PostMapping("/api/v1/note")
-	public ResponseEntity<?> createNote(@RequestBody Note note) {
+	public ResponseEntity<?> createNote(@RequestBody Note note, HttpServletRequest request) {
 		
 		System.out.println("note:::: ----------"+note);
+		Claims claims = (Claims) request.getAttribute("claims");
+		note.setNoteCreatedBy(claims.getSubject());
 		boolean flag = noteService.createNote(note);
 		if(flag) {
 			return new ResponseEntity<Note>(HttpStatus.CREATED);
@@ -155,9 +160,21 @@ public class NoteController {
 	 */
 	@ApiOperation(value="Get all notes by a userId")
 	@GetMapping("/api/v1/note/{userId}")
-	public ResponseEntity<?> getAllNotes(@PathVariable String userId) {
+	public ResponseEntity<?> getAllNotesByUserId(@PathVariable String userId) {
 		
 		return new ResponseEntity<>(noteService.getAllNoteByUserId(userId), HttpStatus.OK);
+		
+	}
+	
+	@ApiOperation(value="Get all notes using login user details")
+	@GetMapping("/api/v1/note")
+	public ResponseEntity<?> getAllNotes(HttpServletRequest request) {
+		
+		Claims claims = (Claims) request.getAttribute("claims");
+		
+		System.out.println("Claims Subject"+claims.getSubject());
+		
+		return new ResponseEntity<>(noteService.getAllNoteByUserId(claims.getSubject()), HttpStatus.OK);
 		
 	}
 	
