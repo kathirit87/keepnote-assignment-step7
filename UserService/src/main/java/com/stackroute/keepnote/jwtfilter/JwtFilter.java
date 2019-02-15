@@ -1,19 +1,14 @@
 package com.stackroute.keepnote.jwtfilter;
 
 
-import org.springframework.web.filter.GenericFilterBean;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
+import org.springframework.web.filter.GenericFilterBean;
 
 
 
@@ -38,7 +33,7 @@ public class JwtFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain) throws IOException, ServletException {
 
-    	final HttpServletRequest request = (HttpServletRequest) req;
+    	/*final HttpServletRequest request = (HttpServletRequest) req;
 		final HttpServletResponse response = (HttpServletResponse) res;
 		final String authHeader = request.getHeader("authorization");
 		if ("OPTIONS".equals(request.getMethod())) {
@@ -55,7 +50,8 @@ public class JwtFilter extends GenericFilterBean {
 									  .getBody();
 			request.setAttribute("claims", claims);
 			filterChain.doFilter(req, res);
-		}
+		}*/
+    	filterChain.doFilter(req, res);
 
     }
 }

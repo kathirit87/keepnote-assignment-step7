@@ -55,7 +55,7 @@ public class UserServiceImplTest {
 
     @Test
     public void registerUserSuccess() throws UserAlreadyExistsException {
-        when(userRepository.insert((User) any())).thenReturn(user);
+        when(userRepository.save((User) any())).thenReturn(user);
         User userSaved = userService.registerUser(user);
         assertEquals(user, userSaved);
 
@@ -63,7 +63,7 @@ public class UserServiceImplTest {
 
     @Test(expected = UserAlreadyExistsException.class       )
     public void registerUserFailure() throws UserAlreadyExistsException {
-        when(userRepository.insert((User) any())).thenReturn(null);
+        when(userRepository.save((User) any())).thenReturn(null);
         User userSaved = userService.registerUser(user);
         assertEquals(user, userSaved);
 

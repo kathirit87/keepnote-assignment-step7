@@ -1,21 +1,24 @@
 package com.stackroute.keepnote.test.repository;
 
-import com.stackroute.keepnote.model.User;
-import com.stackroute.keepnote.repository.UserRepository;
+import java.util.Date;
+import java.util.NoSuchElementException;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Date;
-import java.util.NoSuchElementException;
+import com.stackroute.keepnote.model.User;
+import com.stackroute.keepnote.repository.UserRepository;
 
 @RunWith(SpringRunner.class)
-@DataMongoTest
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserRepositoryTest {
 
     @Autowired
@@ -43,7 +46,7 @@ public class UserRepositoryTest {
     @Test
     public void registerUserTest() {
 
-        userRepository.insert(user);
+        userRepository.save(user);
         User fetcheduser = userRepository.findById("Jhon123").get();
         Assert.assertEquals(user.getUserId(), fetcheduser.getUserId());
 
@@ -51,7 +54,7 @@ public class UserRepositoryTest {
 
     @Test(expected = NoSuchElementException.class)
     public void deleteUserTest() {
-        userRepository.insert(user);
+        userRepository.save(user);
         User fetcheduser = userRepository.findById("Jhon123").get();
         Assert.assertEquals("Jhon123", fetcheduser.getUserId());
         userRepository.delete(fetcheduser);
@@ -61,7 +64,7 @@ public class UserRepositoryTest {
 
     @Test
     public void updateUserTest() {
-        userRepository.insert(user);
+        userRepository.save(user);
         User fetcheduser = userRepository.findById("Jhon123").get();
         fetcheduser.setUserPassword("987654321");
         userRepository.save(fetcheduser);
@@ -71,7 +74,7 @@ public class UserRepositoryTest {
 
     @Test
     public void getUserByIdTest() {
-        userRepository.insert(user);
+        userRepository.save(user);
         User fetcheduser = userRepository.findById("Jhon123").get();
         Assert.assertEquals(user.getUserId(),fetcheduser.getUserId());
 

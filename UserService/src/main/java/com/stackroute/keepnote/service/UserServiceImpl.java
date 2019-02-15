@@ -1,5 +1,6 @@
 package com.stackroute.keepnote.service;
 
+import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +48,9 @@ public class UserServiceImpl implements UserService {
 		
 		if(user!= null 
 				&& user.getUserId()!= null ) {
+			user.setUserAddedDate(new Date());
 			
-			usr = userRepository.insert(user);
+			usr = userRepository.saveAndFlush(user);
 			if(usr!= null ) {
 				return usr;
 			}

@@ -2,14 +2,15 @@ package com.stackroute.keepnote.model;
 
 import java.util.Date;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 
 /*
  * Please note that this class is annotated with @Document annotation
  * @Document identifies a domain object to be persisted to MongoDB.
  *  */
-@Document
+@Entity
 public class User {
 
 	/*
@@ -24,20 +25,30 @@ public class User {
 	@Id
 	private String userId;
 	private String userName;
+    private String firstName;
+    private String lastName;
 	private String userPassword;
 	private String userMobile;
 	private Date userAddedDate;
+	private String userRole;
 	
 	public User() {
 	}
 
-	public User(String userId, String userName, String userPassword, String userMobile, Date userAddedDate) {
+	public User(String userId, String userName, String firstName, String lastName, String userPassword,
+			String userMobile, Date userAddedDate, String userRole) {
+		super();
 		this.userId = userId;
 		this.userName = userName;
+		this.firstName = firstName;
+		this.lastName = lastName;
 		this.userPassword = userPassword;
 		this.userMobile = userMobile;
 		this.userAddedDate = userAddedDate;
+		this.userRole = userRole;
 	}
+
+
 
 	public String getUserId() {
 		return userId;
@@ -79,10 +90,35 @@ public class User {
 		this.userAddedDate = userAddedDate;
 	}
 
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getUserRole() {
+		return userRole;
+	}
+
+	public void setUserRole(String userRole) {
+		this.userRole = userRole;
+	}
+
 	@Override
 	public String toString() {
-		return "User [userId=" + userId + ", userName=" + userName + ", userPassword=" + userPassword + ", userMobile="
-				+ userMobile + ", userAddedDate=" + userAddedDate + "]";
+		return "User [userId=" + userId + ", userName=" + userName + ", firstName=" + firstName + ", lastName="
+				+ lastName + ", userPassword=" + userPassword + ", userMobile=" + userMobile + ", userAddedDate="
+				+ userAddedDate + ", userRole=" + userRole + "]";
 	}
-		 
+	 
 }
