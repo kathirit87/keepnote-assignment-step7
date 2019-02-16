@@ -139,11 +139,12 @@ public class NoteController {
 	 * This handler method should map to the URL "/api/v1/note/{id}" using HTTP PUT method.
 	 */
 	@ApiOperation(value="Update a specific note")
-	@PutMapping("/api/v1/note/{userId}/{noteId}")
-	public ResponseEntity<Note> updateNote(@RequestBody Note note, @PathVariable String userId, @PathVariable int noteId) {
+	@PutMapping("/api/v1/note/{noteId}")
+	public ResponseEntity<Note> updateNote(@RequestBody Note note, @PathVariable int noteId, HttpServletRequest request) {
 		
 		try {
-			Note note1 = noteService.updateNote(note, noteId, userId);
+			Claims claims = (Claims) request.getAttribute("claims");
+			Note note1 = noteService.updateNote(note, noteId, claims.getSubject());
 			return new ResponseEntity<>(note1, HttpStatus.OK); 
 		} catch (NoteNotFoundExeption e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);

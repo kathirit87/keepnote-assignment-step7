@@ -59,7 +59,7 @@ public class NoteServiceImpl implements NoteService{
 				
 				notes.add(note);
 				noteUser.setNotes(notes);
-				//noteUser.setUserId(note.getNoteCreatedBy());
+				noteUser.setUserId(note.getNoteCreatedBy());
 				NoteUser noteUser2=  noteRepository.save(noteUser);
 				System.out.println("noteUser2 Update:::: "+noteUser2);
 				if(noteUser2!=null) {
@@ -147,8 +147,8 @@ public class NoteServiceImpl implements NoteService{
 				}
 				
 				newNotes.add(note);
-				//noteUser.setNotes(notes);
-				//noteUser.setUserId(userId);
+				noteUser.setNotes(newNotes);
+				noteUser.setUserId(userId);
 				noteRepository.save(noteUser);
 				return note;
 			}

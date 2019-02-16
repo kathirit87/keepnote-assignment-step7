@@ -41,7 +41,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping
 public class UserAuthenticationController {
 	
-	static final long EXPIRATION_TIME= 300000;
+	static final long EXPIRATION_TIME= 3000000;
 	Map<String, String> map = new HashMap<>();
 	Map<String, Boolean> map1 = new HashMap<>();
 
